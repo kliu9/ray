@@ -1636,6 +1636,7 @@ class DeploymentState:
             f"Deploying new version of {self._id} "
             f"(initial target replicas: {target_num_replicas})."
         )
+        logger.info("KATIE ADDED THIS LOG STATEMENT!")
         self._replica_constructor_retry_counter = 0
         return True
 
