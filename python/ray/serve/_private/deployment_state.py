@@ -1637,6 +1637,7 @@ class DeploymentState:
             f"(initial target replicas: {target_num_replicas})."
         )
         logger.info("KATIE ADDED THIS LOG STATEMENT!")
+        logger.info("katie added this log statement pt 2")
         self._replica_constructor_retry_counter = 0
         return True
 
