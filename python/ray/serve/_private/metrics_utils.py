@@ -51,9 +51,9 @@ class MetricsPusher:
 
         If `task_func` raises an error, an exception will be logged.
         """
-        time1 = time.time()
         wait_for_stop_event = asyncio.create_task(self.stop_event.wait())
         while True:
+            time1 = time.time()
             if wait_for_stop_event.done():
                 return
 
@@ -74,7 +74,7 @@ class MetricsPusher:
                 sleep_task.cancel()
             
             time2 = time.time()
-            print(f"[MetricsPusher] Run metrics task time: {time2 - time1:.3f} s")
+            print(f"[MetricsPusher] Run metrics task {name} 1 time: {time2 - time1:.3f} s")
 
     def register_or_update_task(
         self,
@@ -87,6 +87,8 @@ class MetricsPusher:
         This method is idempotent - if a task is already registered with
         the specified name, it will update it with the most recent info.
         """
+
+        print(f"Registering task with name {name}, func {task_func} to run every {interval_s}")
 
         self._tasks[name] = _MetricsTask(task_func, interval_s)
         if name not in self._async_tasks or self._async_tasks[name].done():
