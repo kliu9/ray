@@ -247,11 +247,6 @@ if __name__ == "__main__":
         default_worker=True,
     )
 
-    time2 = time.time()
-    cpu_time2 = time.process_time()
-    print(f"[time2 - time1]: {time2 - time1}")
-    print(f"[cpu_time2 - cpu_time1]: {cpu_time2 - cpu_time1}")
-
     # NOTE(suquark): We must initialize the external storage before we
     # connect to raylet. Otherwise we may receive requests before the
     # external storage is intialized.
@@ -267,11 +262,6 @@ if __name__ == "__main__":
         external_storage.setup_external_storage(
             object_spilling_config, node.node_id, node.session_name
         )
-    
-    time3 = time.time()
-    cpu_time3 = time.process_time()
-    print(f"[time3 - time3]: {time3 - time2}")
-    print(f"[cpu_time3 - cpu_time3]: {cpu_time3 - cpu_time2}")
 
     ray._private.worker._global_node = node
     ray._private.worker.connect(
@@ -286,11 +276,6 @@ if __name__ == "__main__":
     )
 
     worker = ray._private.worker.global_worker
-
-    time4 = time.time()
-    cpu_time4 = time.process_time()
-    print(f"[time4 - time3]: {time4 - time3}")
-    print(f"[cpu_time4 - cpu_time3]: {cpu_time4 - cpu_time3}")
 
     stdout_fileno = sys.stdout.fileno()
     stderr_fileno = sys.stderr.fileno()
@@ -334,11 +319,11 @@ if __name__ == "__main__":
         error = load_and_execute_setup_hook(worker_process_setup_hook_key)
         if error is not None:
             worker.core_worker.drain_and_exit_worker("system", error)
-
-    time5 = time.time()
-    cpu_time5 = time.process_time()
-    print(f"[time5 - time4]: {time5 - time4}")
-    print(f"[cpu_time5 - cpu_time4]: {cpu_time5 - cpu_time4}")
+    
+    time2 = time.time()
+    cpu_time2 = time.process_time()
+    print(f"[default_worker.py] total initialization time: {time2 - time1}")
+    print(f"[default_worker.py] total intialization cpu time: {cpu_time2 - cpu_time1}")
 
     if mode == ray.WORKER_MODE:
         worker.main_loop()
