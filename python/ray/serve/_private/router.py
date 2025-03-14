@@ -180,6 +180,7 @@ class RouterMetricsManager:
     ):
         """Update the config for the deployment this router sends requests to."""
 
+        time1 = time.time()
         if self._shutdown:
             return
 
@@ -223,6 +224,8 @@ class RouterMetricsManager:
         else:
             if self.metrics_pusher:
                 self.metrics_pusher.stop_tasks()
+        time2 = time.time()
+        print(f"[RouterMetricsManager] Update deployment config time: {time2 - time1:.2f} s")
 
     def inc_num_total_requests(self, route: str):
         self.num_router_requests.inc(tags={"route": route})

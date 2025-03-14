@@ -2655,7 +2655,7 @@ class DeploymentStateManager:
         Returns True if any of the deployments have replicas in the RECOVERING state.
         """
 
-        time1 = time.time()
+        # time1 = time.time()
         deleted_ids = []
         any_recovering = False
         upscales: Dict[DeploymentID, List[ReplicaSchedulingRequest]] = {}
@@ -2667,14 +2667,16 @@ class DeploymentStateManager:
                 deployment_state.autoscale()
 
             deployment_state.check_and_update_replicas()
-        time2 = time.time()
-        print(f"[DeploymentStateManager] Current state update time: {time2 - time1:.2f} s")
+        
+        # time2 = time.time()
+        # print(f"[DeploymentStateManager] Current state update time: {time2 - time1:.2f} s")
 
         # STEP 2: Check current status
         for deployment_state in self._deployment_states.values():
             deployment_state.check_curr_status()
-        time3 = time.time()
-        print(f"[DeploymentStateManager] Check current status time: {time3 - time2:.2f} s")
+        
+        # time3 = time.time()
+        # print(f"[DeploymentStateManager] Check current status time: {time3 - time2:.2f} s")
 
         # STEP 3: Drain nodes
         draining_nodes = self._cluster_node_info_cache.get_draining_nodes()
@@ -2703,8 +2705,8 @@ class DeploymentStateManager:
         for deployment_id, deployment_state in self._deployment_states.items():
             deployment_state.migrate_replicas_on_draining_nodes(draining_nodes)
         
-        time4 = time.time()
-        print(f"[DeploymentStateManager] Drain nodes time: {time4 - time3:.2f} s")
+        # time4 = time.time()
+        # print(f"[DeploymentStateManager] Drain nodes time: {time4 - time3:.2f} s")
 
         # STEP 4: Scale replicas
         for deployment_id, deployment_state in self._deployment_states.items():
@@ -2715,8 +2717,8 @@ class DeploymentStateManager:
             if downscale:
                 downscales[deployment_id] = downscale
         
-        time5 = time.time()
-        print(f"[DeploymentStateManager] Drain nodes time: {time5 - time4:.2f} s") 
+        # time5 = time.time()
+        # print(f"[DeploymentStateManager] Drain nodes time: {time5 - time4:.2f} s") 
 
         # STEP 5: Update status
         for deployment_id, deployment_state in self._deployment_states.items():
@@ -2726,8 +2728,8 @@ class DeploymentStateManager:
                 deleted_ids.append(deployment_id)
             any_recovering |= any_replicas_recovering
         
-        time6 = time.time()
-        print(f"[DeploymentStateManager] Drain nodes time: {time6 - time5:.2f} s") 
+        # time6 = time.time()
+        # print(f"[DeploymentStateManager] Drain nodes time: {time6 - time5:.2f} s") 
 
         # Take a checkpoint before actually affecting the state of the cluster
         # by starting/stopping replicas.
@@ -2742,8 +2744,8 @@ class DeploymentStateManager:
         for deployment_id, scheduling_requests in upscales.items():
             self._handle_scheduling_request_failures(deployment_id, scheduling_requests)
 
-        time7 = time.time()
-        print(f"[DeploymentStateManager] Schedule starts & stops time: {time7 - time6:.2f} s") 
+        # time7 = time.time()
+        # print(f"[DeploymentStateManager] Schedule starts & stops time: {time7 - time6:.2f} s") 
 
         # STEP 7: Broadcast long poll information
         for deployment_id, deployment_state in self._deployment_states.items():
@@ -2755,8 +2757,8 @@ class DeploymentStateManager:
                     running_replicas=deployment_state.get_running_replica_ids(),
                 )
         
-        time8 = time.time()
-        print(f"[DeploymentStateManager] Broadcast long poll time: {time8 - time7:.2f} s") 
+        # time8 = time.time()
+        # print(f"[DeploymentStateManager] Broadcast long poll time: {time8 - time7:.2f} s") 
 
         # STEP 8: Cleanup
         for deployment_id in deleted_ids:
@@ -2767,8 +2769,8 @@ class DeploymentStateManager:
         if len(deleted_ids):
             self._record_deployment_usage()
         
-        time9 = time.time()
-        print(f"[DeploymentStateManager] Schedule starts & stops time: {time9 - time8:.2f} s") 
+        # time9 = time.time()
+        # print(f"[DeploymentStateManager] Schedule starts & stops time: {time9 - time8:.2f} s") 
 
         return any_recovering
 
