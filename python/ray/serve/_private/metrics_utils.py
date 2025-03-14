@@ -4,6 +4,7 @@ import logging
 from collections import defaultdict
 from dataclasses import dataclass, field
 from typing import Callable, DefaultDict, Dict, Hashable, List, Optional
+import time
 
 from ray.serve._private.constants import (
     METRICS_PUSHER_GRACEFUL_SHUTDOWN_TIMEOUT_S,
@@ -50,7 +51,7 @@ class MetricsPusher:
 
         If `task_func` raises an error, an exception will be logged.
         """
-
+        time1 = time.time()
         wait_for_stop_event = asyncio.create_task(self.stop_event.wait())
         while True:
             if wait_for_stop_event.done():
@@ -71,6 +72,9 @@ class MetricsPusher:
 
             if not sleep_task.done():
                 sleep_task.cancel()
+            
+            time2 = time.time()
+            print(f"[MetricsPusher] Run metrics task time: {time2 - time1:.3f} s")
 
     def register_or_update_task(
         self,

@@ -197,7 +197,7 @@ class ReplicaMetricsManager:
             event_loop.create_task(self._report_cached_metrics_forever())
         
         time2 = time.time()
-        print(f"[ReplicaMetricsManager] Replica initialization time: {time2 - time1:.2f} s")
+        print(f"[ReplicaMetricsManager] Replica initialization time: {time2 - time1:.3f} s")
 
     def _report_cached_metrics(self):
         for route, count in self._cached_request_counter.items():
