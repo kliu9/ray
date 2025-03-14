@@ -1644,6 +1644,7 @@ class DeploymentState:
     def autoscale(self) -> int:
         """Autoscale the deployment based on metrics."""
 
+        time1 = time.time()
         if self._target_state.deleting:
             return
 
@@ -1699,6 +1700,8 @@ class DeploymentState:
                 trigger=DeploymentStatusInternalTrigger.AUTOSCALE_DOWN,
                 message=f"Downscaling from {old_num} to {new_num} replicas.",
             )
+        time2 = time.time()
+        print(f"[DeploymentState] Autoscale time: {time2 - time1:.3f} s")
 
     def delete(self) -> None:
         if not self._target_state.deleting:
