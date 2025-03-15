@@ -1,4 +1,5 @@
 import asyncio
+import logging
 import pickle
 from abc import ABC, abstractmethod
 from typing import Optional, Set, Tuple, Union
@@ -11,11 +12,15 @@ from ray.serve._private.common import (
     ReplicaQueueLengthInfo,
     RunningReplicaInfo,
 )
+from ray.serve._private.constants import (
+    SERVE_LOGGER_NAME,
+)
 from ray.serve._private.replica_result import ActorReplicaResult, ReplicaResult
 from ray.serve._private.replica_scheduler.common import PendingRequest
 from ray.serve._private.utils import JavaActorHandleProxy
 from ray.serve.generated.serve_pb2 import RequestMetadata as RequestMetadataProto
 
+logger = logging.getLogger(SERVE_LOGGER_NAME)
 
 class ReplicaWrapper(ABC):
     """This is used to abstract away details of the transport layer
@@ -75,6 +80,7 @@ class ActorReplicaWrapper(ReplicaWrapper):
         self, pr: PendingRequest, *, with_rejection: bool
     ) -> Union[ObjectRef, ObjectRefGenerator]:
         """Send the request to a Python replica."""
+        logger.info(f'[katie ActorReplicaWrapper _send_request_python] handling with_rejection: {with_rejection}')
         if with_rejection:
             # Call a separate handler that may reject the request.
             # This handler is *always* a streaming call and the first message will
@@ -95,6 +101,7 @@ class ActorReplicaWrapper(ReplicaWrapper):
         self, pr: PendingRequest, with_rejection: bool
     ) -> Tuple[ActorReplicaResult, Optional[ReplicaQueueLengthInfo]]:
         obj_ref_gen = self._send_request_python(pr, with_rejection=with_rejection)
+        logger.info(f'[katie ActorReplicaWrapper send_request_python] generated obj ref: {obj_ref_gen}')
 
         if not with_rejection:
             return ActorReplicaResult(obj_ref_gen, pr.metadata), None
@@ -185,6 +192,7 @@ class RunningReplica:
             assert not with_rejection, "Request rejection not supported for Java."
             return wrapper.send_request_java(pr), None
 
+        logger.info(f'[katie RunningReplica send_request] sending request via python')
         result, queue_len_info = await wrapper.send_request_python(pr, with_rejection)
         if queue_len_info and not queue_len_info.accepted:
             return None, queue_len_info

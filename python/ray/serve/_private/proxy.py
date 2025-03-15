@@ -958,7 +958,7 @@ class HTTPProxy(GenericProxy):
             result_callback = pickle.loads
 
         logger.info(f'result_callback: {result_callback}')
-        logger.info(f'result_callback: {handle_arg_bytes}')
+        logger.info(f'handle_arg_bytes: {handle_arg_bytes}')
         
         # Proxy the receive interface by placing the received messages on a queue.
         # The downstream replica must call back into `receive_asgi_messages` on this

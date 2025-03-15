@@ -251,6 +251,7 @@ def _add_request_pending_assignment(parent_request_id: str, response_id: str, ta
     # NOTE: `parent_request_id` is the `internal_request_id` corresponding
     # to an ongoing Serve request, so it is always non-empty.
     _requests_pending_assignment[parent_request_id][response_id] = task
+    logger.info(f'[katie context.py _add_request_pending_assignment] new map: {_requests_pending_assignment}')
 
 
 def _remove_request_pending_assignment(parent_request_id: str, response_id: str):

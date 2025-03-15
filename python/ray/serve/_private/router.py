@@ -459,6 +459,7 @@ class AsyncioRouter:
         request_kwargs: Dict[str, Any],
     ) -> Tuple[Tuple[Any], Dict[str, Any]]:
         """Asynchronously resolve and replace top-level request args and kwargs."""
+        logger.info(f'[katie AynscioRouter _resolve_request_arguments] request_args: {request_args}, request_kwargs: {request_kwargs}')
         new_args = list(request_args)
         new_kwargs = request_kwargs.copy()
 
@@ -490,6 +491,7 @@ class AsyncioRouter:
             new_kwargs[key] = task.result()
 
         # Return new args and new kwargs
+        logger.info(f'[katie AynscioRouter _resolve_request_arguments] new_args: {request_args}, new_kwargs: {request_kwargs}')
         return new_args, new_kwargs
 
     def _process_finished_request(
@@ -529,7 +531,8 @@ class AsyncioRouter:
         request, so it's up to the caller to time out or cancel the request.
         """
         r = await self._replica_scheduler.choose_replica_for_request(pr)
-
+        logger.info(f'[katie AsyncioRouter schedule_and_send_request] chose replica {r} for request')
+    
         # If the queue len cache is disabled or we're sending a request to Java,
         # then directly send the query and hand the response back. The replica will
         # never reject requests in this code path.
@@ -541,6 +544,7 @@ class AsyncioRouter:
             result = None
             try:
                 result, queue_info = await r.send_request(pr, with_rejection=True)
+                logger.info(f'[katie AsyncioRouter schedule_and_send_request] successfully sent request to replica {r}! result: {result}, queue_info: {queue_info}')
                 self._replica_scheduler.on_new_queue_len_info(r.replica_id, queue_info)
                 if queue_info.accepted:
                     return result, r.replica_id
@@ -590,7 +594,9 @@ class AsyncioRouter:
             raise DeploymentUnavailableError(self.deployment_id)
 
         response_id = generate_request_id()
+        logger.info(f'[katie AsyncioRouter assign_request] generated response_id {response_id}')
         assign_request_task = asyncio.current_task()
+        logger.info(f'[katie AsyncioRouter assign_request] assign_request_task {assign_request_task}')
         ray.serve.context._add_request_pending_assignment(
             request_meta.internal_request_id, response_id, assign_request_task
         )
