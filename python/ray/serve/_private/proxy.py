@@ -943,7 +943,9 @@ class HTTPProxy(GenericProxy):
         The yielded values will be ASGI messages until the final one, which will be
         the status code.
         """
-        logger.info(f'[katie HTTPProxy send_request_to_replica] start of func for {proxy_request}')
+        logger.info(f'[katie HTTPProxy send_request_to_replica] start of func for request {request_id}')
+        logger.info(f'Request Type: {proxy_request.request_type}, Method: {proxy_request.method}, Route Path: {proxy_request.route_path}, Client: {proxy_request.client}')
+        logger.info(f'DeploymentHandle deployment name: {handle.deployment_name}, app name: {handle.app_name}')
         if app_is_cross_language:
             handle_arg_bytes = await self._format_handle_arg_for_java(proxy_request)
             # Response is returned as raw bytes, convert it to ASGI messages.
@@ -955,6 +957,9 @@ class HTTPProxy(GenericProxy):
             # Messages are returned as pickled dictionaries.
             result_callback = pickle.loads
 
+        logger.info(f'result_callback: {result_callback}')
+        logger.info(f'result_callback: {handle_arg_bytes}')
+        
         # Proxy the receive interface by placing the received messages on a queue.
         # The downstream replica must call back into `receive_asgi_messages` on this
         # actor to receive the messages.

@@ -920,6 +920,7 @@ class ReplicaActor:
             deployment_config=deployment_config,
             version=version,
         )
+        logger.info(f'[katie ReplicaActor __init__] initialized ReplicaActor for id {replica_id}!')
 
     def push_proxy_handle(self, handle: ActorHandle):
         # NOTE(edoakes): it's important to call a method on the proxy handle to

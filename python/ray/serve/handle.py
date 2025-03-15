@@ -202,7 +202,7 @@ class _DeploymentHandleBase:
                 "application": metadata.app_name,
             }
         )
-
+        logger.info(f'[katie _DeploymentHandleBase _remote()] assigning request... metadata {metadata}')
         return self._router.assign_request(metadata, *args, **kwargs), metadata
 
     def __getattr__(self, name):
