@@ -112,10 +112,10 @@ def _start_controller(
         global_logging_config=global_logging_config,
     )
 
-    logger.info("[katie api.py _start_controller()] controller:", controller)
+    logger.info(f'[katie api.py _start_controller()] controller: {controller}')
 
     proxy_handles = ray.get(controller.get_proxies.remote())
-    logger.info("[katie api.py start_controller()] proxy_handles:", proxy_handles)
+    logger.info(f'[katie api.py start_controller()] proxy_handles: {proxy_handles}')
     if len(proxy_handles) > 0:
         try:
             ray.get(
@@ -169,7 +169,7 @@ async def serve_start_async(
         controller,
     )
     _set_global_client(client)
-    logger.info("[katie api.py serve_start_async] global client set to:", client)
+    logger.info(f'[katie api.py serve_start_async] global client set to: {client}')
     logger.info(f'Started Serve in namespace "{SERVE_NAMESPACE}".')
     return client
 
