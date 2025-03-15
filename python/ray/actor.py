@@ -1466,6 +1466,7 @@ class ActorHandle:
             object_refs: A list of object refs returned by the remote actor
                 method.
         """
+        logger.info(f'[katie ActorHandle _actor_method_call] calling {method_name} with args {args}, name {name}, num_returns {num_returns}')
         worker = ray._private.worker.global_worker
 
         args = args or []

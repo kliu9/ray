@@ -85,7 +85,7 @@ class _OpenTelemetryProxy:
                 )
 
 
-_global_is_tracing_enabled = False
+_global_is_tracing_enabled = True
 _opentelemetry = None
 
 

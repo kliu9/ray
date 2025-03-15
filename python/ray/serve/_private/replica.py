@@ -1577,6 +1577,7 @@ class UserCallableWrapper:
         Raises any exception raised by the user code so it can be propagated as a
         `RayTaskError`.
         """
+        logger.info(f'[katie UserCallableWrapper call_user_method] request_metadata: {request_metadata}')
         self._raise_if_not_initialized("call_user_method")
 
         logger.info(

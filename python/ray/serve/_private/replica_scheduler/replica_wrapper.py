@@ -129,6 +129,7 @@ class RunningReplica:
             self._actor_handle = JavaActorHandleProxy(replica_info.actor_handle)
         else:
             self._actor_handle = replica_info.actor_handle
+        logger.info(f'[katie RunningReplica __init__] running replica has info: {replica_info} and actor_handle: {actor_handle}')
 
     @property
     def replica_id(self) -> ReplicaID:

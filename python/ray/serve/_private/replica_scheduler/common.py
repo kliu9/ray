@@ -64,6 +64,7 @@ class ReplicaQueueLengthCache:
         self._cache[replica_id] = ReplicaQueueLengthCacheEntry(
             queue_len, self._get_curr_time_s()
         )
+        logger.info(f'[katie ReplicaQueueLengthCache update] updating length of {replica_id} to {queue_len}')
 
     def invalidate_key(self, replica_id: ReplicaID):
         self._cache.pop(replica_id, None)
