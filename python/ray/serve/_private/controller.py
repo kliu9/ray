@@ -365,6 +365,7 @@ class ServeController:
         )
         new_proxy_nodes.add(self._controller_node_id)
         self._proxy_nodes = new_proxy_nodes
+        logger.info(f'[katie ServeController _update_proxy_nodes()] new_proxy_nodes: {new_proxy_nodes}')
 
     async def run_control_loop(self) -> None:
         # NOTE(edoakes): we catch all exceptions here and simply log them,

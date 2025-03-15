@@ -115,7 +115,9 @@ def _start_controller(
     logger.info(f'[katie api.py _start_controller()] controller: {controller}')
 
     proxy_handles = ray.get(controller.get_proxies.remote())
+    proxy_names = ray.get(controller.get_proxy_names.remote())
     logger.info(f'[katie api.py start_controller()] proxy_handles: {proxy_handles}')
+    logger.info(f'[katie api.py start_controller()] proxy_names: {proxy_names}')
     if len(proxy_handles) > 0:
         try:
             ray.get(
