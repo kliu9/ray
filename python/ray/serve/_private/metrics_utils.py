@@ -53,7 +53,6 @@ class MetricsPusher:
         """
         wait_for_stop_event = asyncio.create_task(self.stop_event.wait())
         while True:
-            time1 = time.time()
             if wait_for_stop_event.done():
                 return
 
@@ -73,8 +72,6 @@ class MetricsPusher:
             if not sleep_task.done():
                 sleep_task.cancel()
             
-            time2 = time.time()
-            print(f"[MetricsPusher] Run metrics task {name} 1 time: {time2 - time1:.3f} s")
 
     def register_or_update_task(
         self,
