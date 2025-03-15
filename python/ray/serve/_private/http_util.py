@@ -298,6 +298,7 @@ class ASGIReceiveProxy:
                 pickled_messages = await self._receive_asgi_messages(
                     self._request_metadata
                 )
+                logger.info(f'[katie ASGIReceiveProxy fetch_until_disconnect] fetched message {pickled_messages}')
                 for message in pickle.loads(pickled_messages):
                     self._queue.put_nowait(message)
 

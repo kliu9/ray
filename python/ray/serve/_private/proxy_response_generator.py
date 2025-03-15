@@ -86,13 +86,17 @@ class ProxyResponseGenerator(_ProxyResponseGeneratorBase):
         if self._done:
             raise StopAsyncIteration
 
+        logger.info('[katie ProxyResponseGenerator __anext__] another iteration!')
         try:
             if isinstance(self._response, DeploymentResponseGenerator):
+                logger.info(f'[katie ProxyResponseGenerator __anext__] tis streaming')
                 result = await self._get_next_streaming_result()
             else:
+                logger.info(f'[katie ProxyResponseGenerator __anext__] tis unary')
                 result = await self._get_unary_result()
                 self._done = True
 
+            logger.info(f'[katie ProxyResponseGenerator __anext__] got result: {result}!')
             if self._result_callback is not None:
                 result = self._result_callback(result)
         except asyncio.CancelledError as e:

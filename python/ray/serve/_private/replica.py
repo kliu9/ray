@@ -625,6 +625,7 @@ class ReplicaBase(ABC):
     async def handle_request_with_rejection(
         self, request_metadata: RequestMetadata, *request_args, **request_kwargs
     ):
+        logger.info(f'[katie ReplicaBase handle_request_with_rejection] handling request w metadata {request_metadata}')
         limit = self._deployment_config.max_ongoing_requests
         num_ongoing_requests = self.get_num_ongoing_requests()
         if num_ongoing_requests >= limit:

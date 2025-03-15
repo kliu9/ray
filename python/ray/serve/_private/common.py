@@ -1,13 +1,14 @@
 import json
 from dataclasses import asdict, dataclass, field
 from enum import Enum
+import logging
 from typing import Any, Awaitable, Callable, Dict, List, Optional
 
 from starlette.types import Scope
 
 import ray
 from ray.actor import ActorHandle
-from ray.serve._private.constants import SERVE_DEFAULT_APP_NAME, SERVE_NAMESPACE
+from ray.serve._private.constants import SERVE_DEFAULT_APP_NAME, SERVE_NAMESPACE, SERVE_LOGGER_NAME
 from ray.serve.generated.serve_pb2 import DeploymentStatus as DeploymentStatusProto
 from ray.serve.generated.serve_pb2 import (
     DeploymentStatusInfo as DeploymentStatusInfoProto,
@@ -19,6 +20,7 @@ from ray.serve.grpc_util import RayServegRPCContext
 
 REPLICA_ID_FULL_ID_STR_PREFIX = "SERVE_REPLICA::"
 
+logger = logging.getLogger(SERVE_LOGGER_NAME)
 
 @dataclass(frozen=True)
 class DeploymentID:
@@ -666,10 +668,12 @@ class StreamingHTTPRequest:
 
     @property
     def receive_asgi_messages(self) -> Callable[[RequestMetadata], Awaitable[bytes]]:
+        logging.info(f'[katie StreamingHTTPRequest receive_asgi_messages] self._receive_asgi_messages {self._receive_asgi_messages}')
         if self._receive_asgi_messages is None:
             self._cached_proxy_actor = ray.get_actor(
                 self._proxy_actor_name, namespace=SERVE_NAMESPACE
             )
+            logging.info(f'[katie StreamingHTTPRequest receive_asgi_messages] self._cached_proxy_actor {self._cached_proxy_actor}')
             self._receive_asgi_messages = (
                 self._cached_proxy_actor.receive_asgi_messages.remote
             )

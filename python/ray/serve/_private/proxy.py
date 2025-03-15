@@ -1351,6 +1351,7 @@ class ProxyActor:
         Raises `KeyError` if this request ID is not found. This will happen when the
         request is no longer being handled (e.g., the user disconnects).
         """
+        logger.info(f'[katie ProxyActor receive_asgi_messages] calling http_proxy.receive_asgi_messages w metadata {request_metadata}')
         return pickle.dumps(
             await self.http_proxy.receive_asgi_messages(request_metadata)
         )
