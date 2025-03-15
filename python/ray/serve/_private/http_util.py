@@ -635,4 +635,5 @@ async def start_asgi_http_server(
     # the main thread and uvicorn doesn't expose a way to configure it.
     server.install_signal_handlers = lambda: None
 
+    logger.info(f'[katie start_asgi_http_server] starting http server!')
     return event_loop.create_task(server.serve(sockets=[sock]))

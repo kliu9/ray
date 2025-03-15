@@ -1565,6 +1565,7 @@ class DeploymentState:
             bool: Whether or not the deployment is being updated.
         """
 
+        logger.info(f'[katie DeploymentState deploy] deploying with {deployment_info}')
         curr_deployment_info = self._target_state.info
         if curr_deployment_info is not None:
             # Redeploying should not reset the deployment's start time.
