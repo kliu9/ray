@@ -85,8 +85,8 @@ class _OpenTelemetryProxy:
                 )
 
 
-_global_is_tracing_enabled = True
-_opentelemetry = _OpenTelemetryProxy() #None
+_global_is_tracing_enabled = False
+_opentelemetry = None
 
 
 def _is_tracing_enabled() -> bool:
