@@ -119,6 +119,7 @@ class Deployment:
         self._deployment_config = deployment_config
         self._replica_config = replica_config
         self._docs_path = docs_path
+        logger.info(f'[katie Deployment __init__] initialized deployment with name {name}')
 
     def _validate_name(self, name: str):
         if not isinstance(name, str):

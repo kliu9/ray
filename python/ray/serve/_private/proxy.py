@@ -772,6 +772,7 @@ class HTTPProxy(GenericProxy):
         )
         self.self_actor_name = self_actor_name
         self.asgi_receive_queues: Dict[str, MessageQueue] = dict()
+        logger.info(f'[katie HTTPProxy __init__] http proxy started!')
 
     @property
     def protocol(self) -> RequestProtocol:
@@ -942,6 +943,7 @@ class HTTPProxy(GenericProxy):
         The yielded values will be ASGI messages until the final one, which will be
         the status code.
         """
+        logger.info(f'[katie HTTPProxy send_request_to_replica] start of func for {proxy_request}')
         if app_is_cross_language:
             handle_arg_bytes = await self._format_handle_arg_for_java(proxy_request)
             # Response is returned as raw bytes, convert it to ASGI messages.
@@ -968,6 +970,7 @@ class HTTPProxy(GenericProxy):
             disconnected_task=proxy_asgi_receive_task,
             result_callback=result_callback,
         )
+        logger.info(f'[katie HTTPProxy send_request_to_replica] created MessageQueue {receive_queue} & ProxyResponseGenerator {response_generator}')
 
         status: Optional[ResponseStatus] = None
         response_started = False
@@ -976,11 +979,13 @@ class HTTPProxy(GenericProxy):
             async for asgi_message_batch in response_generator:
                 # See the ASGI spec for message details:
                 # https://asgi.readthedocs.io/en/latest/specs/www.html.
+                logger.info(f'[katie HTTPProxy send_request_to_replica] received batch {asgi_message_batch} from response generator')
                 for asgi_message in asgi_message_batch:
                     if asgi_message["type"] == "http.response.start":
                         # HTTP responses begin with exactly one
                         # "http.response.start" message containing the "status"
                         # field. Other response types (e.g., WebSockets) may not.
+                        logger.info(f'[katie HTTPProxy send_request_to_replica] RECEIVED START OF RESPONSE')
                         status_code = str(asgi_message["status"])
                         status = ResponseStatus(
                             code=status_code,
@@ -997,6 +1002,7 @@ class HTTPProxy(GenericProxy):
                         and not asgi_message.get("more_body", False)
                         and not expecting_trailers
                     ):
+                        logger.info(f'[katie HTTPProxy send_request_to_replica] RECEIVED BODY OF RESPONSE')
                         # If the body is completed and we aren't expecting trailers, the
                         # response is done so we should stop listening for disconnects.
                         response_generator.stop_checking_for_disconnect()
@@ -1200,6 +1206,7 @@ class ProxyActor:
             proxy_router=self.proxy_router,
             request_timeout_s=self._http_options.request_timeout_s,
         )
+        logger.info(f'[katie ProxyActor __init__] http_proxy: {self.http_proxy}')
         self.grpc_proxy = (
             gRPCProxy(
                 node_id=self._node_id,

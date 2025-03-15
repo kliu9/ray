@@ -37,6 +37,7 @@ class ProxyRouter:
         # Info used for gRPC proxy
         # Endpoints info associated with endpoints.
         self.endpoints: Dict[DeploymentID, EndpointInfo] = dict()
+        logger.info(f'[katie ProxyRouter __init__] ProxyRouter initialized!')
 
     def ready_for_traffic(self, is_head: bool) -> Tuple[bool, str]:
         """Whether the proxy router is ready to serve traffic.
