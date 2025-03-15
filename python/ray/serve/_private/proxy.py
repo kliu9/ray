@@ -838,7 +838,9 @@ class HTTPProxy(GenericProxy):
     async def receive_asgi_messages(
         self, request_metadata: RequestMetadata
     ) -> ResponseGenerator:
+        logger.info(f'[katie HTTPProxy receive_asgi_messages] asgi_receive_queues: {self.asgi_receive_queues}')
         queue = self.asgi_receive_queues.get(request_metadata.internal_request_id, None)
+        logger.info(f'[katie HTTPProxy receive_asgi_messages] getting message queue {queue} associated w request id {request_metadata.internal_request_id}')
         if queue is None:
             raise KeyError(f"Request ID {request_metadata.request_id} not found.")
 

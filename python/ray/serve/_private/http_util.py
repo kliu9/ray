@@ -202,6 +202,7 @@ class MessageQueue(Send):
         """
         if not self._closed:
             await self._new_message_event.wait()
+        logger.info('[katie MessageQueue wait_for_message] successfully waited for message!')
 
     def get_messages_nowait(self) -> List[Message]:
         """Returns all messages that are currently available (non-blocking).
@@ -215,6 +216,7 @@ class MessageQueue(Send):
             messages.append(self._message_queue.popleft())
 
         self._new_message_event.clear()
+        logger.info(f'[katie MessageQueue get_messages_nowait] returning {len(messages)} messages: {messages}')
         return messages
 
     async def get_one_message(self) -> Message:

@@ -1273,6 +1273,7 @@ class UserCallableWrapper:
         Returns the result and a boolean indicating if the result was a sync generator
         that has already been consumed.
         """
+        logger.info(f'[katie UserCallableWrapper _call_func_or_gen] calling {callable}')
         sync_gen_consumed = False
         args = args if args is not None else tuple()
         kwargs = kwargs if kwargs is not None else dict()
@@ -1523,6 +1524,7 @@ class UserCallableWrapper:
         but for ASGI apps (like FastAPI), the actual method will be a regular function
         implementing the ASGI `__call__` protocol.
         """
+        logger.info(f'[katie UserCallableWrapper _handle_user_method_result] user_method_info: {user_method_info}')
         result_is_gen = inspect.isgenerator(result)
         result_is_async_gen = inspect.isasyncgen(result)
         if request_metadata.is_streaming:
@@ -1578,7 +1580,7 @@ class UserCallableWrapper:
         Raises any exception raised by the user code so it can be propagated as a
         `RayTaskError`.
         """
-        logger.info(f'[katie UserCallableWrapper call_user_method] request_metadata: {request_metadata}')
+        logger.info(f'[katie UserCallableWrapper call_user_method] request_metadata: {request_metadata}, generator_result_callback: {generator_result_callback}')
         self._raise_if_not_initialized("call_user_method")
 
         logger.info(
@@ -1623,6 +1625,7 @@ class UserCallableWrapper:
                 if request_metadata.is_streaming
                 else None,
             )
+            logger.info(f'[katie UserCallableWrapper call_user_method] after calling: result = {result}, sync_gen_consumed = {sync_gen_consumed}')
             final_result = await self._handle_user_method_result(
                 result,
                 request_metadata,
@@ -1631,6 +1634,7 @@ class UserCallableWrapper:
                 generator_result_callback=generator_result_callback,
                 asgi_args=asgi_args,
             )
+            logger.info(f'[katie UserCallableWrapper call_user_method] result of handling user method result: {final_result}')
 
             if receive_task is not None and not receive_task.done():
                 receive_task.cancel()
