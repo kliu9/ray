@@ -449,6 +449,7 @@ class GenericProxy(ABC):
                 self._ongoing_requests_end()
 
         latency_ms = (time.time() - start_time) * 1000.0
+        logger.info(f'[katie GenericProxy proxy_request] latency_ms: {latency_ms} for request {proxy_request}')
         if response_handler_info.should_record_access_log:
             request_context = ray.serve.context._get_serve_request_context()
             logger.info(
@@ -853,6 +854,7 @@ class HTTPProxy(GenericProxy):
         See details at:
             https://asgi.readthedocs.io/en/latest/specs/index.html.
         """
+        logger.info(f'[katie HTTPProxy __call__] scope = {scope}, receive = {receive}, send = {send}')
         proxy_request = ASGIProxyRequest(scope=scope, receive=receive, send=send)
         async for message in self.proxy_request(proxy_request):
             if not isinstance(message, ResponseStatus):
@@ -873,6 +875,7 @@ class HTTPProxy(GenericProxy):
         try:
             while True:
                 msg = await receive()
+                logger.info(f'[katie HTTPProxy proxy_asgi_receive] received msg: {msg}!')
                 await queue(msg)
 
                 if msg["type"] == "http.disconnect":
@@ -945,6 +948,7 @@ class HTTPProxy(GenericProxy):
         The yielded values will be ASGI messages until the final one, which will be
         the status code.
         """
+        start_time = time.time()
         logger.info(f'[katie HTTPProxy send_request_to_replica] start of func for request {request_id}')
         logger.info(f'Request Type: {proxy_request.request_type}, Method: {proxy_request.method}, Route Path: {proxy_request.route_path}, Client: {proxy_request.client}')
         logger.info(f'DeploymentHandle deployment name: {handle.deployment_name}, app name: {handle.app_name}')
@@ -1106,6 +1110,10 @@ class HTTPProxy(GenericProxy):
                     )
 
             del self.asgi_receive_queues[internal_request_id]
+
+        end_time = time.time()
+        execution_time = end_time - start_time
+        logger.info(f'[katie HTTPProxy send_request_to_replica] execution time for request {request_id}: {execution_time:.6f} seconds')
 
         # The status code should always be set.
         assert status is not None
