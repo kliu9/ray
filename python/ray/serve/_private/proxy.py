@@ -876,7 +876,11 @@ class HTTPProxy(GenericProxy):
             while True:
                 msg = await receive()
                 logger.info(f'[katie HTTPProxy proxy_asgi_receive] received msg: {msg}!')
+                time1 = time.time()
                 await queue(msg)
+                time2 = time.time()
+                logger.info(f'[time HTTPProxy proxy_asgi_receive] put to put message {msg} on queue')
+
 
                 if msg["type"] == "http.disconnect":
                     return None
@@ -991,6 +995,7 @@ class HTTPProxy(GenericProxy):
                 # See the ASGI spec for message details:
                 # https://asgi.readthedocs.io/en/latest/specs/www.html.
                 logger.info(f'[katie HTTPProxy send_request_to_replica] received batch {asgi_message_batch} from response generator')
+                time1 = time.time()
                 for asgi_message in asgi_message_batch:
                     if asgi_message["type"] == "http.response.start":
                         # HTTP responses begin with exactly one
@@ -1037,6 +1042,8 @@ class HTTPProxy(GenericProxy):
 
                     yield asgi_message
                     response_started = True
+                time2 = time.time()
+                logger.info(f'[time HTTPProxy send_request_to_replica] for processing batches from response_generator {request_id}: {time2 - time1:.6f} seconds')
         except TimeoutError:
             status = ResponseStatus(
                 code=TIMEOUT_ERROR_CODE,
@@ -1113,7 +1120,7 @@ class HTTPProxy(GenericProxy):
 
         end_time = time.time()
         execution_time = end_time - start_time
-        logger.info(f'[katie HTTPProxy send_request_to_replica] execution time for request {request_id}: {execution_time:.6f} seconds')
+        logger.info(f'[time HTTPProxy send_request_to_replica] in total for request {request_id}: {execution_time:.6f} seconds')
 
         # The status code should always be set.
         assert status is not None
