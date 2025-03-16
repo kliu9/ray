@@ -879,7 +879,7 @@ class HTTPProxy(GenericProxy):
                 time1 = time.time()
                 await queue(msg)
                 time2 = time.time()
-                logger.info(f'[time HTTPProxy proxy_asgi_receive] put to put message {msg} on queue')
+                logger.info(f'[time HTTPProxy proxy_asgi_receive] to put message {msg} on queue: {time2 - time1:.6f} seconds')
 
 
                 if msg["type"] == "http.disconnect":
