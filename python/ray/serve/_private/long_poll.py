@@ -97,6 +97,7 @@ class LongPollClient:
         }
         self.is_running = True
 
+        logger.info(f'[katie LongPollClient __init__] initial snapshot_ids: {self.snapshot_ids}')
         self._poll_next()
 
     def stop(self) -> None:

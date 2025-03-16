@@ -1176,6 +1176,7 @@ class UserCallableWrapper:
             target=_run_user_code_event_loop,
         )
         self._user_code_event_loop_thread.start()
+        logger.info(f'[katie UserCallableWrapper __init__] initialized UserCallableWrapper with deployment_id {deployment_id}!')
 
     def _run_on_user_code_event_loop(f: Callable) -> Callable:
         """Decorator to run a coroutine method on the user code event loop.
@@ -1459,6 +1460,7 @@ class UserCallableWrapper:
             request_metadata,
             request.receive_asgi_messages,
         )
+        logger.info(f'[katie UserCallableWrapper _prepare_args_for_http_request] preparing args for {request}, using ReceiveProxy {receive}')
         receive_task = self._user_code_event_loop.create_task(
             receive.fetch_until_disconnect()
         )
@@ -1524,7 +1526,7 @@ class UserCallableWrapper:
         but for ASGI apps (like FastAPI), the actual method will be a regular function
         implementing the ASGI `__call__` protocol.
         """
-        logger.info(f'[katie UserCallableWrapper _handle_user_method_result] user_method_info: {user_method_info}')
+        logger.info(f'[katie UserCallableWrapper _handle_user_method_result] user_method_info: {user_method_info} generator_result_callback: {generator_result_callback}')
         result_is_gen = inspect.isgenerator(result)
         result_is_async_gen = inspect.isasyncgen(result)
         if request_metadata.is_streaming:

@@ -1,7 +1,9 @@
+import logging
 from typing import Any, Dict, Optional
 
 from ray._private.utils import split_address
 from ray.dashboard.modules.dashboard_sdk import SubmissionClient
+from ray.serve._private.constants import SERVE_LOGGER_NAME
 
 try:
     import aiohttp
@@ -10,6 +12,8 @@ except ImportError:
     aiohttp = None
     requests = None
 
+
+logger = logging.getLogger(SERVE_LOGGER_NAME)
 
 DEPLOY_PATH = "/api/serve/applications/"
 DELETE_PATH = "/api/serve/applications/"
@@ -75,6 +79,7 @@ class ServeSubmissionClient(SubmissionClient):
 
     def deploy_applications(self, config: Dict):
         """Deploy multiple applications."""
+        logger.info(f'[katie ServeSubmissionClient deploy_applications] deploying application with config: {config}')
         response = self._do_request("PUT", DEPLOY_PATH, json_data=config)
         if response.status_code != 200:
             self._raise_error(response)
