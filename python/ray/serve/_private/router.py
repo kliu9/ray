@@ -530,8 +530,10 @@ class AsyncioRouter:
         This will block indefinitely if no replicas are available to handle the
         request, so it's up to the caller to time out or cancel the request.
         """
+        time1 = time.time()
         r = await self._replica_scheduler.choose_replica_for_request(pr)
-        logger.info(f'[katie AsyncioRouter schedule_and_send_request] chose replica {r} for request')
+        time2 = time.time()
+        logger.info(f'[time AsyncioRouter schedule_and_send_request] chose replica {r} for request in {time2 - time1:.6f} seconds')
     
         # If the queue len cache is disabled or we're sending a request to Java,
         # then directly send the query and hand the response back. The replica will
@@ -543,8 +545,10 @@ class AsyncioRouter:
         while True:
             result = None
             try:
+                time3 = time.time()
                 result, queue_info = await r.send_request(pr, with_rejection=True)
-                logger.info(f'[katie AsyncioRouter schedule_and_send_request] successfully sent request to replica {r}! result: {result}, queue_info: {queue_info}')
+                time4 = time.time()
+                logger.info(f'[time AsyncioRouter schedule_and_send_request] successfully sent request to replica {r}! result: {result}, queue_info: {queue_info} in {time4 - time3:.6f} seconds')
                 self._replica_scheduler.on_new_queue_len_info(r.replica_id, queue_info)
                 if queue_info.accepted:
                     return result, r.replica_id
@@ -589,7 +593,7 @@ class AsyncioRouter:
         **request_kwargs,
     ) -> ReplicaResult:
         """Assign a request to a replica and return the resulting object_ref."""
-
+        time1 = time.time()
         if not self._deployment_available:
             raise DeploymentUnavailableError(self.deployment_id)
 
@@ -651,6 +655,9 @@ class AsyncioRouter:
                     replica_result.cancel()
 
                 raise
+        
+        time2 = time.time()
+        logger.info(f'[time AsyncioRouter assign_request] in {time2 - time1:.6f} seconds')
 
     async def shutdown(self):
         await self._metrics_manager.shutdown()
