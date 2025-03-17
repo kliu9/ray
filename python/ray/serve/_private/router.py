@@ -548,7 +548,7 @@ class AsyncioRouter:
                 time3 = time.time()
                 result, queue_info = await r.send_request(pr, with_rejection=True)
                 time4 = time.time()
-                logger.info(f'[time AsyncioRouter schedule_and_send_request] successfully sent request to replica {r}! result: {result}, queue_info: {queue_info} in {time4 - time3:.6f} seconds')
+                logger.info(f'[time AsyncioRouter schedule_and_send_request] successfully sent request {pr.RequestMetadata.internal_request_id} to replica {r}! result: {result}, queue_info: {queue_info} in {time4 - time3:.6f} seconds')
                 self._replica_scheduler.on_new_queue_len_info(r.replica_id, queue_info)
                 if queue_info.accepted:
                     return result, r.replica_id
