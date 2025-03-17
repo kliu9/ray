@@ -127,6 +127,7 @@ def replica_queue_length_autoscaling_policy(
     )
     # Scale up.
     if desired_num_replicas > curr_target_num_replicas:
+        logger.info(f'[replica_queue_length_autoscaling_policy] new decision_counter: {decision_counter}, needed # consecutive periods: {int(config.upscale_delay_s / CONTROL_LOOP_INTERVAL_S)}')
         # If the previous decision was to scale down (the counter was
         # negative), we reset it and then increment it (set to 1).
         # Otherwise, just increment.
