@@ -177,6 +177,7 @@ class RunningReplica:
         # NOTE(edoakes): the `get_num_ongoing_requests` method name is shared by
         # the Python and Java replica implementations. If you change it, you need to
         # change both (or introduce a branch here).
+        logger.info(f'[autoscale get_queue_len] calling get_num_ongoing_requests on actor handle from {self.replica_id}')
         obj_ref = self._actor_handle.get_num_ongoing_requests.remote()
         try:
             return await obj_ref

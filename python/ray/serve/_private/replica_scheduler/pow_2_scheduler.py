@@ -559,6 +559,8 @@ class PowerOfTwoChoicesReplicaScheduler(ReplicaScheduler):
             )
             t.replica = r
             get_queue_len_tasks.append(t)
+        
+        logger.info(f'[autoscale PowerofTwoChoicesReplicaScheduler _probe_queue_lens] getting queue len tasks {get_queue_len_tasks}')
 
         done, pending = await asyncio.wait(
             get_queue_len_tasks,
