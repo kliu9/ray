@@ -1,5 +1,6 @@
 import logging
 import math
+import time
 from typing import Any, Dict, Optional
 
 from ray.serve._private.constants import CONTROL_LOOP_INTERVAL_S, SERVE_LOGGER_NAME
@@ -34,6 +35,7 @@ def _calculate_desired_num_replicas(
             on the input metrics and the current number of replicas.
 
     """
+    time1 = time.time()
     if num_running_replicas == 0:
         raise ValueError("Number of replicas cannot be zero")
 
@@ -78,6 +80,8 @@ def _calculate_desired_num_replicas(
     # Ensure scaled_min_replicas <= desired_num_replicas <= scaled_max_replicas.
     desired_num_replicas = max(min_replicas, min(max_replicas, desired_num_replicas))
 
+    time2 = time.time()
+    logger.info(f'[time _calculate_desired_num_replicas] {time2 - time1:.6f} seconds')
     return desired_num_replicas
 
 
@@ -100,6 +104,8 @@ def replica_queue_length_autoscaling_policy(
     `get_decision_num_replicas` is called once every CONTROL_LOOP_PERIOD_S
     seconds.
     """
+    time1 = time.time()
+    logger.info(f'[autoscale replica_queue_length_autoscaling_policy] curr_target_num_replicas = {curr_target_num_replicas}, total_num_requests = {total_num_requests}, num_running_replicas = {num_running_replicas}, config = {config}!')
     decision_counter = policy_state.get("decision_counter", 0)
     if num_running_replicas == 0:
         # When 0 replicas and queries are queued, scale up the replicas
@@ -153,6 +159,8 @@ def replica_queue_length_autoscaling_policy(
         decision_counter = 0
 
     policy_state["decision_counter"] = decision_counter
+    time2 = time.time()
+    logger.info(f'[time replica_queue_length_autoscaling_policy] {time2 - time1:.6f} seconds')
     return decision_num_replicas
 
 

@@ -1,4 +1,5 @@
 import logging
+import time
 import warnings
 from enum import Enum
 from typing import Any, Callable, List, Optional, Union
@@ -111,6 +112,7 @@ class AutoscalingConfig(BaseModel):
         Import the policy if it's passed in as a string import path. Then cloudpickle
         the policy and set `serialized_policy_def` if it's empty.
         """
+        time1 = time.time()
         values = self.dict()
         policy = values.get("_policy")
         if isinstance(policy, Callable):
@@ -125,6 +127,9 @@ class AutoscalingConfig(BaseModel):
         if not values.get("_serialized_policy_def"):
             self._serialized_policy_def = cloudpickle.dumps(policy)
         self._policy = policy_path
+        logger.info(f'[time AutoscalingConfig serialize_policy] self._policy: {self._policy}')
+        time2 = time.time()
+        logger.info(f'[time AutoscalingConfig serialize_policy] {time2 - time1:.6f} seconds')
 
     @classmethod
     def default(cls):
