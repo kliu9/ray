@@ -105,7 +105,7 @@ def replica_queue_length_autoscaling_policy(
     seconds.
     """
     time1 = time.time()
-    logger.info(f'[autoscale replica_queue_length_autoscaling_policy] curr_target_num_replicas = {curr_target_num_replicas}, total_num_requests = {total_num_requests}, num_running_replicas = {num_running_replicas}, config = {config}!')
+    # logger.info(f'[autoscale replica_queue_length_autoscaling_policy] curr_target_num_replicas = {curr_target_num_replicas}, total_num_requests = {total_num_requests}, num_running_replicas = {num_running_replicas}, config = {config}!')
     decision_counter = policy_state.get("decision_counter", 0)
     if num_running_replicas == 0:
         # When 0 replicas and queries are queued, scale up the replicas
