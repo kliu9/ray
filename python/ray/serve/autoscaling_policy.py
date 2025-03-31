@@ -125,6 +125,8 @@ def replica_queue_length_autoscaling_policy(
         override_min_replicas=capacity_adjusted_min_replicas,
         override_max_replicas=capacity_adjusted_max_replicas,
     )
+    logger.info(f'desired_num_replicas: {desired_num_replicas}, curr_target_num_replicas: {curr_target_num_replicas}')
+    
     # Scale up.
     if desired_num_replicas > curr_target_num_replicas:
         logger.info(f'[replica_queue_length_autoscaling_policy] new decision_counter: {decision_counter}, needed # consecutive periods: {int(config.upscale_delay_s / CONTROL_LOOP_INTERVAL_S)}')
