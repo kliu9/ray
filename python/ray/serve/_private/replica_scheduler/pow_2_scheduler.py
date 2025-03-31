@@ -637,6 +637,7 @@ class PowerOfTwoChoicesReplicaScheduler(ReplicaScheduler):
         chosen_replica_id: Optional[str] = None
         not_in_cache: List[RunningReplica] = []
         if self._use_replica_queue_len_cache:
+            logger.info(f'[in select_from_candidate_replicas] using replica queue len cache')
             # Populate available queue lens from the cache.
             for r in candidates:
                 queue_len = self._replica_queue_len_cache.get(r.replica_id)
@@ -654,6 +655,7 @@ class PowerOfTwoChoicesReplicaScheduler(ReplicaScheduler):
         # If there is a valid replica to schedule based on the information in the
         # cache, schedule it. Else fall back to actively probing.
         if chosen_replica_id is None:
+            logger.info(f'[in select_from_candidate_replicas] probing each replica')
             for r, queue_len in await self._probe_queue_lens(
                 not_in_cache,
                 backoff_index,

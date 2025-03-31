@@ -109,6 +109,7 @@ class ActorReplicaWrapper(ReplicaWrapper):
         try:
             first_ref = await obj_ref_gen.__anext__()
             queue_len_info: ReplicaQueueLengthInfo = pickle.loads(await first_ref)
+            logger.info(f'[katie ActorReplicaWrapper send_request_python] queue_len_info: {queue_len_info}')
             return ActorReplicaResult(obj_ref_gen, pr.metadata), queue_len_info
         except asyncio.CancelledError as e:
             # HTTP client disconnected or request was explicitly canceled.
