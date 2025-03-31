@@ -269,12 +269,14 @@ class ReplicaMetricsManager:
     def inc_num_ongoing_requests(self) -> int:
         """Increment the current total queue length of requests for this replica."""
         self._num_ongoing_requests += 1
+        logger.info(f'[ReplicaMetricsManager] incrementing num_ongoing_requests to {self._num_ongoing_requests}')
         if not self._cached_metrics_enabled:
             self._num_ongoing_requests_gauge.set(self._num_ongoing_requests)
 
     def dec_num_ongoing_requests(self) -> int:
         """Decrement the current total queue length of requests for this replica."""
         self._num_ongoing_requests -= 1
+        logger.info(f'[ReplicaMetricsManager] decrementing num_ongoing_requests to {self._num_ongoing_requests}')
         if not self._cached_metrics_enabled:
             self._num_ongoing_requests_gauge.set(self._num_ongoing_requests)
 
@@ -625,11 +627,11 @@ class ReplicaBase(ABC):
     async def handle_request_with_rejection(
         self, request_metadata: RequestMetadata, *request_args, **request_kwargs
     ):
-        logger.info(f'[katie ReplicaBase handle_request_with_rejection] handling request w metadata {request_metadata}')
         limit = self._deployment_config.max_ongoing_requests
         num_ongoing_requests = self.get_num_ongoing_requests()
+        logger.info(f'[katie ReplicaBase handle_request_with_rejection] num_ongoing_requests: {num_ongoing_requests}, handling request w metadata: {request_metadata}')
         if num_ongoing_requests >= limit:
-            logger.warning(
+            logger.info(
                 f"Replica at capacity of max_ongoing_requests={limit}, "
                 f"rejecting request {request_metadata.request_id}.",
                 extra={"log_to_stderr": False},
