@@ -45,6 +45,8 @@ def _calculate_desired_num_replicas(
         autoscaling_config.get_target_ongoing_requests() * num_running_replicas
     )
     error_ratio: float = total_num_requests / target_num_requests
+    
+    logger.info(f'[in _calculate_desired_num_replicas] total_num_requests: {total_num_requests}, target_num_requests: {target_num_requests}, error_ratio: {error_ratio}') 
 
     # If error ratio >= 1, then the number of ongoing requests per
     # replica exceeds the target and we will make an upscale decision,
@@ -59,6 +61,7 @@ def _calculate_desired_num_replicas(
 
     # Multiply the distance to 1 by the smoothing ("gain") factor (default=1).
     smoothed_error_ratio = 1 + ((error_ratio - 1) * scaling_factor)
+    logger.info(f'[in _calculate_desired_num_replicas] total_num_requests: {total_num_requests}, target_num_requests: {target_num_requests}, error_ratio: {error_ratio}, smoothed_error_ratio: {smoothed_error_ratio}')
     desired_num_replicas = math.ceil(num_running_replicas * smoothed_error_ratio)
 
     # If desired num replicas is "stuck" because of the smoothing factor
