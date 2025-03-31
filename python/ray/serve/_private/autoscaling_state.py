@@ -280,6 +280,7 @@ class AutoscalingState:
             capacity_adjusted_max_replicas=self.get_num_replicas_upper_bound(),
             policy_state=self._policy_state,
         )
+        logger.info(f'[in get_decision_num_replicas] decision_num_replicas = {decision_num_replicas}')
 
         if _skip_bound_check:
             return decision_num_replicas
@@ -315,6 +316,7 @@ class AutoscalingState:
                 if id in self._replica_requests:
                     total_requests += self._replica_requests[id].running_requests
 
+        logger.info(f'[in get_total_num_requests] total_requests = {total_requests}')
         return total_requests
 
 
