@@ -1083,6 +1083,7 @@ class DeploymentReplica:
 
     def update_actor_details(self, **kwargs) -> None:
         details_kwargs = self._actor_details.dict()
+        logger.info(f'updating actor details with kwargs {details_kwargs}')
         details_kwargs.update(kwargs)
         self._actor_details = ReplicaDetails(**details_kwargs)
 
@@ -1129,6 +1130,7 @@ class ReplicaStateContainer:
             replica: replica to add.
         """
         assert isinstance(state, ReplicaState), f"Type: {type(state)}"
+        logger.info(f'updating state of replica {replica}')
         replica.update_state(state)
         self._replicas[state].append(replica)
 
