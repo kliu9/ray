@@ -875,11 +875,11 @@ class HTTPProxy(GenericProxy):
         try:
             while True:
                 msg = await receive()
-                logger.info(f'[katie HTTPProxy proxy_asgi_receive] received msg: {msg}!')
-                time1 = time.time()
+                # logger.info(f'[katie HTTPProxy proxy_asgi_receive] received msg: {msg}!')
+                # time1 = time.time()
                 await queue(msg)
-                time2 = time.time()
-                logger.info(f'[time HTTPProxy proxy_asgi_receive] to put message {msg} on queue: {time2 - time1:.6f} seconds')
+                # time2 = time.time()
+                # logger.info(f'[time HTTPProxy proxy_asgi_receive] to put message {msg} on queue: {time2 - time1:.6f} seconds')
 
 
                 if msg["type"] == "http.disconnect":
