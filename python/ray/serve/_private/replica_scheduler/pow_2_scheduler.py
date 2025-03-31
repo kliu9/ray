@@ -571,7 +571,7 @@ class PowerOfTwoChoicesReplicaScheduler(ReplicaScheduler):
             replica = t.replica
             result.append((replica, None))
             t.cancel()
-            logger.warning(
+            logger.info(
                 f"Failed to get queue length from {replica.replica_id} "
                 f"within {queue_len_response_deadline_s}s. If this happens repeatedly "
                 "it's likely caused by high network latency in the cluster. You can "
